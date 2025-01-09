@@ -1,0 +1,37 @@
+[gd_scene load_steps=5 format=3 uid="uid://cepit4xacjw4x"]
+
+[ext_resource type="Script" path="res://scripts/Guard_Detection.cs" id="1_hxs4a"]
+[ext_resource type="Material" uid="uid://cecaamkpaa74t" path="res://materials/temp_guard.tres" id="1_uf5fo"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_wtadv"]
+size = Vector3(1, 1.5, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_fdfmw"]
+size = Vector3(1, 1.5, 1)
+
+[node name="Guard" type="CharacterBody3D"]
+script = ExtResource("1_hxs4a")
+
+[node name="MovementCollider" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0)
+shape = SubResource("BoxShape3D_wtadv")
+
+[node name="TempModel" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0)
+material_override = ExtResource("1_uf5fo")
+mesh = SubResource("BoxMesh_fdfmw")
+
+[node name="Area3D" type="Area3D" parent="TempModel"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.75, 0)
+
+[node name="CollisionPolygon3D" type="CollisionPolygon3D" parent="TempModel/Area3D"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.75, 0)
+depth = 1.25
+polygon = PackedVector2Array(-1, 0, 1, 0, 2, 3, -2, 3)
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
+debug_enabled = true
+
+[connection signal="body_entered" from="TempModel/Area3D" to="." method="_on_area_3d_body_entered"]
+[connection signal="body_exited" from="TempModel/Area3D" to="." method="_on_area_3d_body_exited"]
