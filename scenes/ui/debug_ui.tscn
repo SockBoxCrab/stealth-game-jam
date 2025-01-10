@@ -1,0 +1,32 @@
+[gd_scene load_steps=2 format=3 uid="uid://db3sot74kpb7d"]
+
+[ext_resource type="Script" path="res://scripts/ui/DebugUI.cs" id="1_b4dki"]
+
+[node name="DebugUI" type="Control" node_paths=PackedStringArray("_debugPanel")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_b4dki")
+_debugPanel = NodePath("DebugPanel")
+
+[node name="DebugPanel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -300.0
+offset_bottom = 150.0
+grow_horizontal = 0
+
+[node name="DetectedLabel" type="Label" parent="DebugPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "In Vision Cone: {0}
+Detected: {1}"

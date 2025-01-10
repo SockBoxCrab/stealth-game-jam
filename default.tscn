@@ -1,11 +1,12 @@
-[gd_scene load_steps=27 format=4 uid="uid://beawxub2wlnve"]
+[gd_scene load_steps=28 format=4 uid="uid://beawxub2wlnve"]
 
 [ext_resource type="Script" path="res://addons/func_godot/src/map/func_godot_map.gd" id="1_kuphh"]
 [ext_resource type="Resource" uid="uid://bkhxcqsquw1yg" path="res://addons/func_godot/func_godot_default_map_settings.tres" id="2_afqo7"]
 [ext_resource type="Texture2D" uid="uid://cyg2snr1w5xw5" path="res://addons/func_godot/textures/default_texture.png" id="3_p1gja"]
 [ext_resource type="PackedScene" uid="uid://bqa2ljvenyygy" path="res://scenes/gameplay/player.tscn" id="4_j52em"]
 [ext_resource type="PackedScene" uid="uid://cepit4xacjw4x" path="res://scenes/gameplay/Guard.tscn" id="5_su305"]
-[ext_resource type="PackedScene" uid="uid://db3sot74kpb7d" path="res://scenes/ui/game_ui.tscn" id="6_6jesa"]
+[ext_resource type="PackedScene" uid="uid://db3sot74kpb7d" path="res://scenes/ui/debug_ui.tscn" id="6_6jesa"]
+[ext_resource type="PackedScene" uid="uid://balgvnnh12mar" path="res://scenes/gameplay/Goal.tscn" id="7_n56x4"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_x1dme"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -215,9 +216,12 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50.5269, 0, 14.5255)
 [node name="Point4" type="Marker3D" parent="Patrol Paths/Guard3 Patrol"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50.3676, 4.51015, 26.2224)
 
-[node name="GameUI" parent="." instance=ExtResource("6_6jesa")]
+[node name="DebugUI" parent="." instance=ExtResource("6_6jesa")]
 debugEnabled = true
 
-[connection signal="Detected" from="Guards/Guard1" to="GameUI" method="DebugDetected"]
-[connection signal="Detected" from="Guards/Guard2" to="GameUI" method="DebugDetected"]
-[connection signal="Detected" from="Guards/Guard3" to="GameUI" method="DebugDetected"]
+[node name="Goal" parent="." instance=ExtResource("7_n56x4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.282, 0.01, -5.703)
+
+[connection signal="Detected" from="Guards/Guard1" to="DebugUI" method="DebugDetected"]
+[connection signal="Detected" from="Guards/Guard2" to="DebugUI" method="DebugDetected"]
+[connection signal="Detected" from="Guards/Guard3" to="DebugUI" method="DebugDetected"]

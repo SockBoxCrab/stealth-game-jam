@@ -1,0 +1,64 @@
+[gd_scene load_steps=3 format=3 uid="uid://dtxrtfi4do3px"]
+
+[ext_resource type="Script" path="res://scripts/ui/MainMenuUI.cs" id="1_5bhg2"]
+[ext_resource type="Theme" uid="uid://b34orn04a47vi" path="res://themes/MainMenuTheme.tres" id="1_x73cv"]
+
+[node name="MainMenuUI" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_5bhg2")
+
+[node name="TempTitle" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -60.0
+offset_top = -124.0
+offset_right = 60.0
+offset_bottom = -99.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 100
+text = "Stealth Game!!!"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -150.0
+offset_top = -300.0
+offset_right = 150.0
+offset_bottom = -50.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 15
+
+[node name="StartButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("1_x73cv")
+text = "Start Game"
+
+[node name="OptionsButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("1_x73cv")
+text = "Options"
+
+[node name="QuitButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("1_x73cv")
+text = "Quit
+"
+
+[connection signal="pressed" from="VBoxContainer/StartButton" to="." method="StartButtonPressed"]
+[connection signal="pressed" from="VBoxContainer/OptionsButton" to="." method="OptionsButtonPressed"]
+[connection signal="pressed" from="VBoxContainer/QuitButton" to="." method="QuitButtonPressed"]
