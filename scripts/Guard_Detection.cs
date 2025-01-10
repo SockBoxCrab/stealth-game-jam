@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Reflection.Metadata;
 
 public partial class Guard_Detection : CharacterBody3D
 {
@@ -88,16 +89,21 @@ public partial class Guard_Detection : CharacterBody3D
 
 	// connects to the physics signal so that things can stay synchronized
 	// as recommended in the documentation: https://docs.godotengine.org/en/stable/tutorials/navigation/navigation_introduction_3d.html
+	
+	// Currently not connected to the physics signal, since doing so caused problems
+	// (it was being called every frame, which is not the behaviour we want)
 	private void ActorSetup()
 	{
 		// set the target to the second patrol point, since we 
 		// spawn our guard at the first patrol point
 		_navigationAgent.TargetPosition = patrolPoints[_currentPatrolPoint];
-		GetTargetRotation();
+		GetTargetRotation(_navigationAgent.GetNextPathPosition());
 	}
 
     public override void _PhysicsProcess(double delta)
     {
+		// set Velocity to zero to allow Guard to stop in place
+		Velocity = Vector3.Zero;
 		// if playerBody has a reference (AKA, it has entered the vision cone)
 		// then continually cast rays to ensure player can actually be detected
         if (playerBody != null) { _raycast_to_player(playerBody); }
@@ -108,18 +114,19 @@ public partial class Guard_Detection : CharacterBody3D
 			gravity += GetGravity() * (float)delta;
 		}
 
-		/*
-		=== Things to think about for Pathfinding ===
-		How often to update the "get next path" function?
-		*/
+		// Follow all of the points in patrolPoints
+		if (patrolCollection != null && !_followingCommand) { FollowPatrolRoute(delta); }
 
-		// Follow all of the points in patrolPoints, and follow their commands
-		if (patrolCollection != null || !_followingCommand) { FollowPatrolRoute(delta); }
-
+		// apply all movement stuff now, including adding gravity on
 		Velocity += gravity;
-		// apply all movement stuff now
 		MoveAndSlide();
 
+		// rotate the skin to face towards the given _targetAngle
+		// this is independent of FollowPatrolRoute, so if _targetAngle is changed elsewhere
+		// it should still rotate
+		RotateNodes(delta);
+
+		// print out any debug info to the console for this specific Guard
 		if (debugEnabled)
 		{
 			GD.Print("Target Angle: " + _targetAngle);
@@ -131,27 +138,26 @@ public partial class Guard_Detection : CharacterBody3D
 		var currentPos = this.GlobalPosition;
 		if (_navigationAgent.IsNavigationFinished())
 		{
-			// our navigation to the point is finished, move to the next patrol point
+			// grab the command of the current patrol point BEFORE we change to the next one
+			var curCommand = patrolCommands[_currentPatrolPoint];
+			// our navigation to the point is finished, so grab our next patrol position
 			_currentPatrolPoint += 1;
 			if (!(_currentPatrolPoint < patrolPoints.Length)) { _currentPatrolPoint = 0; }
 			_navigationAgent.TargetPosition = patrolPoints[_currentPatrolPoint];
+
+			// Before we start moving, check if we have a command on this point
+			if (curCommand != "none") { HandleCommands(curCommand); }
 		}
 		var nextPos = _navigationAgent.GetNextPathPosition();
 
-		GetTargetRotation();
+		if(!_followingCommand) { GetTargetRotation(nextPos); }
 
 		Velocity = currentPos.DirectionTo(nextPos) * Speed;
-		
-		RotateNodes(delta);
 	}
 
-	private void GetTargetRotation()
-	{
-		var nextPos = _navigationAgent.GetNextPathPosition();
-
-		var index = _currentPatrolPoint - 1;
-		if (_currentPatrolPoint == 0) { index = 3; }
-		
+	// Tells guard how far it needs to be rotated to face the given nextPos
+	private void GetTargetRotation(Vector3 nextPos)
+	{	
 		var pos2d = new Vector2(this.GlobalPosition.X, -this.GlobalPosition.Z);
 		var lookPos2d = new Vector2(nextPos.X, -nextPos.Z);
 		var dir = -(pos2d - lookPos2d);
@@ -171,7 +177,6 @@ public partial class Guard_Detection : CharacterBody3D
 
 		// need to decide if this should apply to the collision box as well. Unsure if this
 		// would cause any problems with the CharacterBody3D node.
-		epic
 	}
 
 	/*
@@ -183,12 +188,71 @@ public partial class Guard_Detection : CharacterBody3D
 	5) Stop and look down
 	*/
 
+	#region Commands
+	void HandleCommands(string curCommand)
+	{
+		if (curCommand == "leftright") { StartLeftRight(); }
+	}
+
+	private float leftDir;
+	private float rightDir;
+	enum leftRightEnum
+	{
+		left,
+		right,
+		waiting
+	}
+	private leftRightEnum leftRightStatus;
+
+	void StartLeftRight()
+	{
+		// set this to true to prevent the guard from continuing to follow its path
+		_followingCommand = true;
+		// on initial calling of this command, we need to get a few pieces of info
+		// then we can't start looping through stuff
+		leftDir = _skin.Rotation.Y + Mathf.DegToRad(90);
+		rightDir = _skin.Rotation.Y - Mathf.DegToRad(90);
+
+		leftRightStatus = leftRightEnum.left;
+		
+		LookLeftRight();
+	}
+
+	void LookLeftRight()
+	{
+		// Initialize a timer to set the new behavior of the Guard 
+		// after it finishes looking in a direction
+		var timer = new Timer();
+		timer.WaitTime = 2;
+		timer.OneShot = true;
+
+		switch(leftRightStatus)
+		{
+			case leftRightEnum.left:
+				_targetAngle = leftDir;
+				timer.Timeout += () => {
+					leftRightStatus = leftRightEnum.right;
+					LookLeftRight();
+				};
+				break;
+			case leftRightEnum.right:
+				_targetAngle = rightDir;
+				timer.Timeout += () => {
+					_followingCommand = false;
+				};
+				break;
+		}
+		AddChild(timer);
+		timer.Start();
+	}
+	#endregion
+
 	#region Detection
     // use this to check when colliding with player
     private void _on_area_3d_body_entered(Node3D body)
 	{
-		GD.Print("Colliding with something!");
-		GD.Print(body);
+		//GD.Print("Colliding with something!");
+		//GD.Print(body);
 		if (body.IsInGroup("Player")) { playerBody = body; }
 	}
 
