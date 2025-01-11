@@ -222,6 +222,12 @@ debugEnabled = true
 [node name="Goal" parent="." instance=ExtResource("7_n56x4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.282, 0.01, -5.703)
 
+[node name="MiniMapCam" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 24.169, 22.755, 22.174)
+projection = 1
+fov = 37.8493
+size = 65.0
+
 [connection signal="Detected" from="Guards/Guard1" to="DebugUI" method="DebugDetected"]
 [connection signal="Detected" from="Guards/Guard2" to="DebugUI" method="DebugDetected"]
 [connection signal="Detected" from="Guards/Guard3" to="DebugUI" method="DebugDetected"]
