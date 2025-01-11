@@ -1,7 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://bbpesbq8u8ji1"]
 
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_8eccd"]
-size = Vector2(10, 10)
+[ext_resource type="PackedScene" uid="uid://dgvdadfn2087l" path="res://scenes/ui/Minimap.tscn" id="1_f4cps"]
 
 [node name="GameUI" type="Control"]
 layout_mode = 3
@@ -11,17 +10,22 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="PanelContainer" type="PanelContainer" parent="."]
+[node name="SubViewportContainer" type="SubViewportContainer" parent="."]
 layout_mode = 1
-offset_left = 50.0
-offset_top = 50.0
-offset_right = 250.0
+offset_right = 200.0
 offset_bottom = 200.0
+stretch = true
 
-[node name="Minimap" type="ColorRect" parent="PanelContainer"]
-layout_mode = 2
-color = Color(0.355314, 0.355314, 0.355314, 1)
+[node name="SubViewport" type="SubViewport" parent="SubViewportContainer"]
+disable_3d = true
+handle_input_locally = false
+gui_disable_input = true
+size = Vector2i(200, 200)
+render_target_update_mode = 4
 
-[node name="PlayerIndicator" type="Sprite2D" parent="PanelContainer"]
-position = Vector2(100, 75)
-texture = SubResource("PlaceholderTexture2D_8eccd")
+[node name="Minimap" parent="SubViewportContainer/SubViewport" instance=ExtResource("1_f4cps")]
+
+[node name="EnemyIndicatorBase" parent="SubViewportContainer/SubViewport/Minimap" index="2"]
+visionConePoints = PackedVector2Array(-1000, 0, 1000, 0, 2000, 3000, -2000, 3000)
+
+[editable path="SubViewportContainer/SubViewport/Minimap"]

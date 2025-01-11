@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=4 uid="uid://beawxub2wlnve"]
+[gd_scene load_steps=29 format=4 uid="uid://beawxub2wlnve"]
 
 [ext_resource type="Script" path="res://addons/func_godot/src/map/func_godot_map.gd" id="1_kuphh"]
 [ext_resource type="Resource" uid="uid://bkhxcqsquw1yg" path="res://addons/func_godot/func_godot_default_map_settings.tres" id="2_afqo7"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://cepit4xacjw4x" path="res://scenes/gameplay/Guard.tscn" id="5_su305"]
 [ext_resource type="PackedScene" uid="uid://db3sot74kpb7d" path="res://scenes/ui/debug_ui.tscn" id="6_6jesa"]
 [ext_resource type="PackedScene" uid="uid://balgvnnh12mar" path="res://scenes/gameplay/Goal.tscn" id="7_n56x4"]
+[ext_resource type="PackedScene" uid="uid://bbpesbq8u8ji1" path="res://scenes/ui/game_ui.tscn" id="8_u4y4h"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_x1dme"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -228,6 +229,18 @@ projection = 1
 fov = 37.8493
 size = 65.0
 
+[node name="GameUI" parent="." instance=ExtResource("8_u4y4h")]
+
+[node name="Minimap" parent="GameUI/SubViewportContainer/SubViewport" index="0" node_paths=PackedStringArray("playerTransform", "guardCollection")]
+playerTransform = NodePath("../../../../Player")
+guardCollection = NodePath("../../../../Guards")
+
+[node name="EnemyIndicatorBase" parent="GameUI/SubViewportContainer/SubViewport/Minimap" index="2"]
+visionConePoints = PackedVector2Array(-10000, 0, 10000, 0, 20000, 30000, -20000, 30000)
+
 [connection signal="Detected" from="Guards/Guard1" to="DebugUI" method="DebugDetected"]
 [connection signal="Detected" from="Guards/Guard2" to="DebugUI" method="DebugDetected"]
 [connection signal="Detected" from="Guards/Guard3" to="DebugUI" method="DebugDetected"]
+
+[editable path="GameUI"]
+[editable path="GameUI/SubViewportContainer/SubViewport/Minimap"]
