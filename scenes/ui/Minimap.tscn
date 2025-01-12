@@ -1,14 +1,14 @@
 [gd_scene load_steps=5 format=3 uid="uid://dgvdadfn2087l"]
 
-[ext_resource type="Script" path="res://scripts/ui/Minimap.cs" id="1_1kf4f"]
 [ext_resource type="Texture2D" uid="uid://dkb5vl60if2k3" path="res://materials/temp_red.jpg" id="2_f6wai"]
-[ext_resource type="Script" path="res://scripts/ui/DrawVisionCone.cs" id="3_8wsu4"]
+[ext_resource type="Script" path="res://scripts/ui/Minimap.cs" id="3_8wsu4"]
+[ext_resource type="Script" path="res://scripts/ui/DrawVisionCone.cs" id="3_tjxvw"]
 
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_dj10b"]
 size = Vector2(10, 10)
 
 [node name="Minimap" type="Node2D" node_paths=PackedStringArray("minimapCam")]
-script = ExtResource("1_1kf4f")
+script = ExtResource("3_8wsu4")
 minimapCam = NodePath("PlayerIndicator/Camera2D")
 
 [node name="Background" type="ColorRect" parent="."]
@@ -22,14 +22,15 @@ color = Color(0.359069, 0.359069, 0.359069, 1)
 texture = SubResource("PlaceholderTexture2D_dj10b")
 
 [node name="Camera2D" type="Camera2D" parent="PlayerIndicator"]
+zoom = Vector2(0.75, 0.75)
 
 [node name="EnemyIndicatorBase" type="Sprite2D" parent="."]
 unique_name_in_owner = true
 visible = false
 texture = ExtResource("2_f6wai")
-script = ExtResource("3_8wsu4")
+script = ExtResource("3_tjxvw")
 visionConePoints = PackedVector2Array(-10, 0, 10, 0, 20, 30, -20, 30)
-visionColor = PackedColorArray(0, 0.541176, 0.211765, 0.576471)
+visionColor = PackedColorArray(0.738467, 0.36244, 1.92523e-07, 0.717647)
 
 [node name="EnemyGroup" type="Node" parent="."]
 unique_name_in_owner = true

@@ -4,24 +4,28 @@ using System;
 [Tool]
 public partial class DrawVisionCone : Sprite2D
 {
-	[Export]
-	private Vector2[] visionConePoints;
+    const int MTOPX = 10;
 
-	const int MTOPX = 10;
+    private Vector2[] _visionConePoints;
+
+	[Export]
+	public Vector2[] visionConePoints;
 
     [Export]
     private Color[] visionColor;
 
-    public override void _Ready()
-    {
-        // multiply everything by the Meters to Pixels ratio
-        for (int i = 0; i < visionConePoints.Length; i++)
-        {
-            visionConePoints[i] *= MTOPX;
-        }
-    }
     public override void _Draw()
     {
         DrawPolygon(visionConePoints, visionColor);
+    }
+
+    private void OnPointsSet()
+    {
+        GD.Print("Multiplying values by MTOPX!");
+        for (int i = 0; i < visionConePoints.Length; i++)
+        {
+            visionConePoints[i] *= MTOPX;
+            GD.Print(visionConePoints[i]);
+        }
     }
 }

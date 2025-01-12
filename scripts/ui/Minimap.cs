@@ -3,10 +3,9 @@ using System;
 
 public partial class Minimap : Node2D
 {
-	[Export]
-	private Node3D playerTransform;
+	private Node3D playerNode;
 	private int guardCount;
-	[Export]
+	
 	private Node guardCollection;
 	private Node3D[] guardTransform;
 	private Node guardGroup;
@@ -23,12 +22,17 @@ public partial class Minimap : Node2D
 	private Vector2 playerPos;
 	private Vector2[] guardPos;
 
-	// an array that references all of the sprites that represent the guards,
-	// since the amount that needs to exist will have to be created on loading of the map
+	// 1 meter in 3D space = 10 pixels in 2D space
+	// apply this to playerPos and guardPos everytime they are updated
+	const int MTOPX = 10;
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
+		// Grab the player and guard nodes
+		playerNode = GetNode<Node3D>("../../../../Player");
+		guardCollection = GetNode<Node>("../../../../Guards");
+
 		guardCount = guardCollection.GetChildCount();
 		guardTransform = new Node3D[guardCount];
 		guardPos = new Vector2[guardCount];
@@ -37,9 +41,11 @@ public partial class Minimap : Node2D
 		{
 			guardTransform[i] = guardCollection.GetChild<Node3D>(i);
 			guardPos[i] = new Vector2(guardTransform[i].GlobalPosition.X, guardTransform[i].GlobalPosition.Z);
+			guardPos[i] *= MTOPX;
 		}
 
-		playerPos = new Vector2(playerTransform.GlobalPosition.X, playerTransform.GlobalPosition.Z);
+		playerPos = new Vector2(playerNode.GlobalPosition.X, playerNode.GlobalPosition.Z);
+		playerPos *= MTOPX;
 		playerIndicator = GetNode<Sprite2D>("PlayerIndicator");
 
 		guardGroup = GetNode<Node>("%EnemyGroup");
@@ -61,16 +67,17 @@ public partial class Minimap : Node2D
 		// in here is where we update the positions of everything. This includes the background
 
 		// update the current 2D positions of the players and the guards
-		playerPos = new Vector2(playerTransform.GlobalPosition.X, playerTransform.GlobalPosition.Z);
+		// as well as apply this position to the sprites
+		playerPos = new Vector2(playerNode.GlobalPosition.X, playerNode.GlobalPosition.Z);
+		playerPos *= MTOPX;
+		playerIndicator.GlobalPosition = playerPos;
+
 		for (int i = 0; i < guardCount; i++)
 		{
 			guardPos[i] = new Vector2(guardTransform[i].GlobalPosition.X, guardTransform[i].GlobalPosition.Z);
+			guardPos[i] *= MTOPX;
+			guardIndicator[i].GlobalPosition = guardPos[i];
+			guardIndicator[i].Rotation = guardTransform[i].GetNode<MeshInstance3D>("TempModel").GlobalRotation.Y * -1;
 		}
-
-		// set minimap camera to follow the player
-		//minimapCam.GlobalPosition = playerPos;
-
-		// then, down here we apply the player/guard positions to the sprites
-		
 	}
 }

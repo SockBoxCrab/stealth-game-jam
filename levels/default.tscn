@@ -1,13 +1,15 @@
-[gd_scene load_steps=29 format=4 uid="uid://beawxub2wlnve"]
+[gd_scene load_steps=33 format=4 uid="uid://beawxub2wlnve"]
 
-[ext_resource type="Script" path="res://addons/func_godot/src/map/func_godot_map.gd" id="1_kuphh"]
-[ext_resource type="Resource" uid="uid://bkhxcqsquw1yg" path="res://addons/func_godot/func_godot_default_map_settings.tres" id="2_afqo7"]
-[ext_resource type="Texture2D" uid="uid://cyg2snr1w5xw5" path="res://addons/func_godot/textures/default_texture.png" id="3_p1gja"]
-[ext_resource type="PackedScene" uid="uid://bqa2ljvenyygy" path="res://scenes/gameplay/player.tscn" id="4_j52em"]
-[ext_resource type="PackedScene" uid="uid://cepit4xacjw4x" path="res://scenes/gameplay/Guard.tscn" id="5_su305"]
-[ext_resource type="PackedScene" uid="uid://db3sot74kpb7d" path="res://scenes/ui/debug_ui.tscn" id="6_6jesa"]
-[ext_resource type="PackedScene" uid="uid://balgvnnh12mar" path="res://scenes/gameplay/Goal.tscn" id="7_n56x4"]
-[ext_resource type="PackedScene" uid="uid://bbpesbq8u8ji1" path="res://scenes/ui/game_ui.tscn" id="8_u4y4h"]
+[ext_resource type="Script" path="res://scripts/LevelManager.cs" id="1_7wm70"]
+[ext_resource type="Script" path="res://addons/func_godot/src/map/func_godot_map.gd" id="2_tsd44"]
+[ext_resource type="Resource" uid="uid://bkhxcqsquw1yg" path="res://addons/func_godot/func_godot_default_map_settings.tres" id="3_an1s2"]
+[ext_resource type="Texture2D" uid="uid://cyg2snr1w5xw5" path="res://addons/func_godot/textures/default_texture.png" id="4_jw8dy"]
+[ext_resource type="PackedScene" uid="uid://bqa2ljvenyygy" path="res://scenes/gameplay/player.tscn" id="5_8toe0"]
+[ext_resource type="PackedScene" uid="uid://cepit4xacjw4x" path="res://scenes/gameplay/Guard.tscn" id="6_e1q4o"]
+[ext_resource type="PackedScene" uid="uid://balgvnnh12mar" path="res://scenes/gameplay/Goal.tscn" id="7_7wd1x"]
+[ext_resource type="PackedScene" uid="uid://db3sot74kpb7d" path="res://scenes/ui/debug_ui.tscn" id="8_k25ac"]
+[ext_resource type="PackedScene" uid="uid://bbpesbq8u8ji1" path="res://scenes/ui/game_ui.tscn" id="9_d73nx"]
+[ext_resource type="Script" path="res://scripts/IntroCamera.cs" id="10_xhwny"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_x1dme"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -29,7 +31,7 @@ geometry_parsed_geometry_type = 1
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ai5r7"]
 albedo_color = Color(0.808998, 0.808998, 0.808998, 1)
-albedo_texture = ExtResource("3_p1gja")
+albedo_texture = ExtResource("4_jw8dy")
 metallic_specular = 0.0
 texture_filter = 2
 
@@ -91,7 +93,20 @@ points = PackedVector3Array(48.5, 4, 24, 48.5, 0, 16.5, 52, 0, 16.5, 52, 4, 24, 
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_okgsm"]
 points = PackedVector3Array(48.5, 4, 24, 48.5, 0, 24, 52, 0, 24, 52, 4, 24, 48.5, 4, 27.5, 48.5, 0, 27.5, 52, 0, 27.5, 52, 4, 27.5)
 
-[node name="Level" type="Node3D"]
+[sub_resource type="Curve3D" id="Curve3D_23qf4"]
+_data = {
+"points": PackedVector3Array(0, 0, 0, -0.945, 0, -6.115, 0, 0, 0, -1.51, 0, 0.52, 2.61, 0, -0.99, 4.39384, 0, -14.4195, 1.215, 0, 3.62, 0, 0, 0, 37.1159, 0, -18.3427),
+"tilts": PackedFloat32Array(0, 0, 0)
+}
+point_count = 3
+
+[sub_resource type="Curve3D" id="Curve3D_mr4w6"]
+
+[node name="Level" type="Node3D" node_paths=PackedStringArray("introCamera", "outroCamera")]
+script = ExtResource("1_7wm70")
+introCamera = NodePath("IntroCameraPath/PathFollow3D/IntroCamera")
+outroCamera = NodePath("OutroCam")
+levelFileName = "res://levels/default.tscn"
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 0, 0, 0)
@@ -104,9 +119,9 @@ environment = SubResource("Environment_4cpxy")
 navigation_mesh = SubResource("NavigationMesh_htg5h")
 
 [node name="FuncGodotMap" type="Node3D" parent="NavigationRegion3D"]
-script = ExtResource("1_kuphh")
+script = ExtResource("2_tsd44")
 local_map_file = "res://maps/testing.map"
-map_settings = ExtResource("2_afqo7")
+map_settings = ExtResource("3_an1s2")
 
 [node name="entity_0_worldspawn" type="StaticBody3D" parent="NavigationRegion3D/FuncGodotMap"]
 collision_mask = 0
@@ -166,20 +181,20 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 52.7523, 0.0163159, 16.4604)
 vertices = PackedVector3Array(-0.75, 0, -0.65, -0.75, 0, 0.65, -0.5, 0, 0.65, -0.5, 0, -0.65)
 affect_navigation_mesh = true
 
-[node name="Player" parent="." groups=["Player"] instance=ExtResource("4_j52em")]
+[node name="Player" parent="." groups=["Player"] instance=ExtResource("5_8toe0")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.0171, 0.400596, 24.0196)
 
 [node name="Guards" type="Node" parent="."]
 unique_name_in_owner = true
 
-[node name="Guard1" parent="Guards" instance=ExtResource("5_su305")]
+[node name="Guard1" parent="Guards" instance=ExtResource("6_e1q4o")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.69706, 0.054348, 0.637446)
 
-[node name="Guard2" parent="Guards" node_paths=PackedStringArray("patrolCollection") instance=ExtResource("5_su305")]
+[node name="Guard2" parent="Guards" node_paths=PackedStringArray("patrolCollection") instance=ExtResource("6_e1q4o")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.463, 0, 9.31506)
 patrolCollection = NodePath("../../Patrol Paths/Guard2 Patrol")
 
-[node name="Guard3" parent="Guards" node_paths=PackedStringArray("patrolCollection") instance=ExtResource("5_su305")]
+[node name="Guard3" parent="Guards" node_paths=PackedStringArray("patrolCollection") instance=ExtResource("6_e1q4o")]
 patrolCollection = NodePath("../../Patrol Paths/Guard3 Patrol")
 
 [node name="Patrol Paths" type="Node" parent="."]
@@ -217,30 +232,44 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50.5269, 0, 14.5255)
 [node name="Point4" type="Marker3D" parent="Patrol Paths/Guard3 Patrol"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50.3676, 4.51015, 26.2224)
 
-[node name="DebugUI" parent="." instance=ExtResource("6_6jesa")]
-debugEnabled = true
-
-[node name="Goal" parent="." instance=ExtResource("7_n56x4")]
+[node name="Goal" parent="." instance=ExtResource("7_7wd1x")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.282, 0.01, -5.703)
 
-[node name="MiniMapCam" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 24.169, 22.755, 22.174)
-projection = 1
-fov = 37.8493
-size = 65.0
+[node name="DebugUI" parent="." instance=ExtResource("8_k25ac")]
+debugEnabled = true
 
-[node name="GameUI" parent="." instance=ExtResource("8_u4y4h")]
+[node name="GameUI" parent="." instance=ExtResource("9_d73nx")]
 
-[node name="Minimap" parent="GameUI/SubViewportContainer/SubViewport" index="0" node_paths=PackedStringArray("playerTransform", "guardCollection")]
-playerTransform = NodePath("../../../../Player")
-guardCollection = NodePath("../../../../Guards")
+[node name="IntroCameraPath" type="Path3D" parent="."]
+process_mode = 3
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.69822, 5.15691, 48.4147)
+curve = SubResource("Curve3D_23qf4")
 
-[node name="EnemyIndicatorBase" parent="GameUI/SubViewportContainer/SubViewport/Minimap" index="2"]
-visionConePoints = PackedVector2Array(-10000, 0, 10000, 0, 20000, 30000, -20000, 30000)
+[node name="PathFollow3D" type="PathFollow3D" parent="IntroCameraPath"]
+process_mode = 3
+transform = Transform3D(0.988252, 0, 0.152722, 0, 0.999991, 0, -0.152722, 0, 0.988252, 0, 0, 0)
+script = ExtResource("10_xhwny")
 
+[node name="IntroCamera" type="Camera3D" parent="IntroCameraPath/PathFollow3D"]
+process_mode = 3
+
+[node name="CameraLookPath" type="Path3D" parent="."]
+process_mode = 3
+curve = SubResource("Curve3D_mr4w6")
+
+[node name="PathFollow3D" type="PathFollow3D" parent="CameraLookPath"]
+process_mode = 3
+
+[node name="OutroCam" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18.679, 1.37, -2.451)
+
+[connection signal="StartIntroCam" from="." to="IntroCameraPath/PathFollow3D" method="FollowPath"]
+[connection signal="StartOutroCam" from="." to="GameUI" method="StartOutroFade"]
 [connection signal="Detected" from="Guards/Guard1" to="DebugUI" method="DebugDetected"]
 [connection signal="Detected" from="Guards/Guard2" to="DebugUI" method="DebugDetected"]
 [connection signal="Detected" from="Guards/Guard3" to="DebugUI" method="DebugDetected"]
-
-[editable path="GameUI"]
-[editable path="GameUI/SubViewportContainer/SubViewport/Minimap"]
+[connection signal="GoalReached" from="Goal" to="." method="StartOutro"]
+[connection signal="IntroFadeTransition" from="GameUI" to="." method="StopIntroCam"]
+[connection signal="OutroFadeTransition" from="GameUI" to="." method="SetOutroCam"]
+[connection signal="RestartLevel" from="GameUI" to="." method="RestartLevel"]
+[connection signal="TweenFinished" from="IntroCameraPath/PathFollow3D" to="GameUI" method="StartIntroFade"]
