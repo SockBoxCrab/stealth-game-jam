@@ -3,9 +3,13 @@ using System;
 
 public partial class MainMenuUI : Control
 {
+	[Export]
+	string StartSceneName = "res://levels/default.tscn";
+
 	void StartButtonPressed()
 	{
-		GetTree().ChangeSceneToFile("res://default.tscn");
+		var global = GetNode<Global>("/root/Global");
+    	global.GotoScene(StartSceneName);
 	}
 
 	void OptionsButtonPressed()

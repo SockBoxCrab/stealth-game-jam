@@ -21,6 +21,8 @@ public partial class LevelManager : Node3D
 	[Export(PropertyHint.File, "*.tscn")]
 	private string levelFileName;
 
+	private Global global;
+
 	[Signal]
 	public delegate void StartIntroCamEventHandler();
 	[Signal]
@@ -31,22 +33,25 @@ public partial class LevelManager : Node3D
 	public override void _Ready()
 	{
 		goal = GetNode<Area3D>("Goal");
+		global = GetNode<Global>("/root/Global");
 		// since this means we are entering the scene for the first time
 		// we should play our intro stuff.
 		GetTree().Paused = true;
 		// The HUD should not be visible during this intro
 		// and the main camera that does the pan should still operate while paused
 
-		// This starts the camera intro thingy
-		EmitSignal(SignalName.StartIntroCam);
-		outroCamera.Current = false;
-		introCamera.Current = true;
-	}
-
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
-	{
-		
+		// Start the camera intro as long as we aren't supposed to skip it
+		if (global.skipIntro)
+		{
+			StopIntroCam();
+		}
+		else
+		{
+			EmitSignal(SignalName.StartIntroCam);
+			outroCamera.Current = false;
+			introCamera.Current = true;
+			global.curState = Global.GameState.Intro;
+		}
 	}
 
 	private void StopIntroCam()
@@ -54,12 +59,14 @@ public partial class LevelManager : Node3D
 		introCamera.Current = false;
 		outroCamera.Current = false;
 		GetTree().Paused = false;
+		global.curState = Global.GameState.Play;
 	}
 
 	private void StartOutro()
 	{
 		GetTree().Paused = true;
 		EmitSignal(SignalName.StartOutroCam);
+		global.curState = Global.GameState.Finished;
 	}
 
 	private void SetOutroCam()
@@ -71,10 +78,15 @@ public partial class LevelManager : Node3D
 
 	private void RestartLevel()
 	{
-		// here we would set something like,
-		// "Yes, we are doing a quick restart" which would tell
-		// this level manager to skip the intro sequence
-		// But for now we can just reload the entire scene
-		GetTree().ChangeSceneToFile(levelFileName);
+		// should this check the level state? i.e. are we finished
+		// things like that, to determine whether or not to skip the intro?
+		global.skipIntro = true;
+		global.GotoScene(levelFileName);
+	}
+
+	private void RestartLevelWithIntro()
+	{
+		global.skipIntro = false;
+		global.GotoScene(levelFileName);
 	}
 }

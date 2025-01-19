@@ -8,7 +8,11 @@ public partial class IntroCamera : PathFollow3D
 
     private void FollowPath()
 	{
-		var tween = CreateTween().TweenProperty(this, "progress_ratio", 1, 10);
-		tween.Finished += () => EmitSignal(SignalName.TweenFinished);
+		var global = GetNode<Global>("/root/Global");
+		if (!global.skipIntro)
+		{
+			var tween = CreateTween().TweenProperty(this, "progress_ratio", 1, 10);
+			tween.Finished += () => EmitSignal(SignalName.TweenFinished);
+		}
 	}
 }

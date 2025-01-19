@@ -14,8 +14,6 @@ public partial class GameUI : Control
 	ColorRect fadeTransitionRect;
 	AnimationPlayer animationPlayer;
 
-	private bool isFinished = false;
-
 	[Signal]
 	public delegate void IntroFadeTransitionEventHandler();
 	[Signal]
@@ -23,17 +21,20 @@ public partial class GameUI : Control
 	[Signal]
 	public delegate void RestartLevelEventHandler();
 
+	private Global global;
+
     public override void _Ready()
     {
         pauseLabel.Visible = false;
 		animationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
+		global = GetNode<Global>("/root/Global");
     }
 
     public override void _Process(double delta)
     {
         if (Input.IsActionJustPressed("pause"))
 		{
-			if (!isFinished)
+			if (global.curState != Global.GameState.Finished)
 			{
 				pauseLabel.Visible = !pauseLabel.Visible;
 				if (pauseLabel.Visible) { GetTree().Paused = true; }
@@ -43,6 +44,11 @@ public partial class GameUI : Control
 			{
 				EmitSignal(SignalName.RestartLevel);
 			}
+		}
+
+		if (Input.IsActionJustPressed("restart"))
+		{
+			EmitSignal(SignalName.RestartLevel);
 		}
     }
 
@@ -65,6 +71,5 @@ public partial class GameUI : Control
 	private void StartOutroFade()
 	{
 		animationPlayer.Play("outroFadeTransition");
-		isFinished = true;
 	}
 }

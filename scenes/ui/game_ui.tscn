@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=3 uid="uid://bbpesbq8u8ji1"]
 
-[ext_resource type="Script" path="res://scenes/ui/GameUI.cs" id="1_e3nm5"]
+[ext_resource type="Script" path="res://scripts/ui/GameUI.cs" id="1_e3nm5"]
 [ext_resource type="PackedScene" uid="uid://dgvdadfn2087l" path="res://scenes/ui/Minimap.tscn" id="1_f4cps"]
 
 [sub_resource type="Animation" id="Animation_hek8f"]
